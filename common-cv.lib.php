@@ -126,7 +126,7 @@ class CommonCV // {{{
       $record["publisher"] = $this->get_xpath("field[@id='4ad593960aba4a21bf154fa8daf37f9f']/value", $elements->item($i));
       $record["volume"] = $this->get_xpath("field[@id='0a826c656ff34e579dfcbfb373771260']/value", $elements->item($i));
       $record["number"] = $this->get_xpath("field[@id='cc1d9e14945b4e8496641dbe22b3448a']/value", $elements->item($i));
-      $record["status"] = $this->get_xpath("field[@id='cf36bbd2e16c45cba9768a84ac2d6729']/lov/@id", $elements->item($i));
+      $record["status"] = $this->get_xpath("field[@id='3b56e4362d6a495aa5d22a1de5914741']/lov/@id", $elements->item($i));
       $pr = $this->get_xpath("field[@id='2089ff1a86844b6c9a10fc63469f9a9d']/lov/@id", $elements->item($i));
       if ($pr === $CCV_CONST["Yes-No"]["Yes"])
         $record["peer_reviewed"] = true;
@@ -199,6 +199,7 @@ class CommonCV // {{{
       $record["institution"] = $this->get_xpath("field[@id='e36ccf9a00a241dc942e608df32c8c84']/value", $elements->item($i));
       $record["diploma"] = $this->get_xpath("field[@id='5b8638e8646448dcb8edef2c21e01c87']/lov/@id", $elements->item($i));
       $record["status"] = $this->get_xpath("field[@id='e5d331dca0fc4000992e43b695b2db21']/lov/@id", $elements->item($i));
+      $record["role"] = $this->get_xpath("field[@id='78a3e68f1ab74f31b9284c2acdb70739']/lov/@id", $elements->item($i));
       $record["title"] = $this->get_xpath("field[@id='420e5bbd57104c3c9823b5e6850ee6f8']/value", $elements->item($i));
       $records[$id] = $record;
     }
@@ -229,7 +230,8 @@ class CommonCV // {{{
       $record["otherfunder"] = $this->get_xpath("section[@id='376b8991609f46059a3d66028f005360']/field[@id='1bdead14642545f3971a59997d82da67']/value", $elements->item($i));
       $record["total_amount"] = $this->get_xpath("section[@id='376b8991609f46059a3d66028f005360']/field[@id='dfe6a0b34347486aaa677f07306a141e']/value", $elements->item($i));
       $record["received_amount"] = $this->get_xpath("section[@id='376b8991609f46059a3d66028f005360']/field[@id='882a94c7548744ca992e2647346d2e14']/value", $elements->item($i));
-      $record["role"] = $this->get_xpath("field[@id='13806a6772d248158619261afaab2fe0']/lov/@id", $elements->item($i));
+      $record["funding_role"] = $this->get_xpath("field[@id='7496de092dc84038a1881e8f9d77e713']/lov/@id", $elements->item($i));
+      $record["funding_competitive"] = $this->get_xpath("section[@id='376b8991609f46059a3d66028f005360']/field[@id='00efdc7e790a48ac8675696c66afc3ad']/lov/@id", $elements->item($i));
       $co_holders = array();
       $co_els = $this->m_xpath->query("section[@id='c7c473d1237b432fb7f2abd831130fb7']", $elements->item($i));
       for ($j = 0; !is_null($co_els) && $j < $co_els->length; $j++)
