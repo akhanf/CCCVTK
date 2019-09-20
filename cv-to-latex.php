@@ -629,9 +629,12 @@ function section_publications($ccv, $pub_first_year = -1) // {{{
     if (!empty($pub['published_in']))
       $t_out .= ", ".p("{$pub['published_in']}. ");
     else
-      $t_out .= ". ";
-    $t_out .= str_replace("-", "--", p("{$pub['pages']}.\n"));
-    switch ($pub['status'])
+	    $t_out .= ". ";
+
+
+    $t_out .= "\n";
+//    $t_out .= str_replace("-", "--", p("{$pub['pages']}.\n"));
+/*    switch ($pub['status'])
     {
         case $ccv->constants['Publishing Status']['Accepted']:
           $t_out .= " Accepted for publication.";
@@ -645,7 +648,7 @@ function section_publications($ccv, $pub_first_year = -1) // {{{
           break;
         default:
           break;
-    }
+    }*/
     // Complement with BibTeX data if any
     if (BIBTEX_PRESENT)
     {
@@ -789,11 +792,7 @@ function print_fund( $ccv, $fund , $name)
 	     }else{
 		     $pi_out .= "\\textbf{PI:} ".$name.". ";}
 	     // for accounting, only count grands that were competitive:
-	     if ($fund['funding_competitive'] == $ccv->constants["Yes-No"]["Yes"]){
-	             $stats['total_amount_pi'] += $fund['total_amount'];
-		     $num_funds_pi++;
-	     }
-	     break;
+		     break;
      case $ccv->constants["Funding Role"]["Co-investigator"]:
      case $ccv->constants["Funding Role"]["Co-applicant"]:
 	     if ($num_coIs>0){
@@ -801,11 +800,7 @@ function print_fund( $ccv, $fund , $name)
 	     }else {
 		     $coI_out .= "\\textbf{Co-I:} ".$name.". ";
 	     }
-	     if ($fund['funding_competitive'] == $ccv->constants["Yes-No"]["Yes"]){
-	             $stats['total_amount_coi'] += $fund['total_amount'];
-		     $num_funds_coi++;
-	     }
-
+	 
 	     break;
      case $ccv->constants["Funding Role"]["Collaborator"]:
 	     if ($num_collabs>0){
@@ -814,11 +809,7 @@ function print_fund( $ccv, $fund , $name)
 		     $collab_out .= "\\textbf{Collaborator:} ".$name.". ";
 	     }
 
-	     if ($fund['funding_competitive'] == $ccv->constants["Yes-No"]["Yes"]){
-	             $stats['total_amount_collab'] += $fund['total_amount'];
-		     $num_funds_collab++;
-	     }
-
+	  
 	     break;
 
   }
@@ -956,10 +947,33 @@ function section_funding($ccv, $funds_first_year,$name) // {{{
   $stats['total_amount_pi'] = 0;
   $stats['total_amount_coi'] = 0;
   $stats['total_amount_collab'] = 0;
+
+  $stats['total_awarded_pi'] = 0;
+  $stats['total_awarded_coi'] = 0;
+  $stats['total_awarded_collab'] = 0;
+  
+  $stats['total_completed_pi'] = 0;
+  $stats['total_completed_coi'] = 0;
+  $stats['total_completed_collab'] = 0;
+
+
   $num_funds = 0;
   $num_funds_pi = 0;
   $num_funds_coi = 0;
   $num_funds_collab = 0;
+
+  $num_awarded_pi = 0;
+  $num_awarded_coi = 0;
+  $num_awarded_collab = 0;
+
+  $num_completed_pi = 0;
+  $num_completed_coi = 0;
+  $num_completed_collab = 0;
+
+
+  $num_awarded=0;
+  $num_completed=0;
+  $num_submitted=0;
 
   if ($funds_first_year < 0)
         $t_out .= "\n\\section{Research Funding History}\n";
@@ -989,10 +1003,33 @@ function section_funding($ccv, $funds_first_year,$name) // {{{
     
     $num_funds++;
     $num_awarded++;
-    $stats['total_amount'] += $fund['total_amount'];
+
+   // for accounting, only count grands that were competitive:
+    if ($fund['funding_competitive'] == $ccv->constants["Yes-No"]["Yes"]){
+	    
+    switch ($fund['funding_role']){
+    case $ccv->constants["Funding Role"]["Principal Investigator"]:
+    case $ccv->constants["Funding Role"]["Principal Applicant"]:
+	             $stats['total_awarded_pi'] += $fund['total_amount'];
+		     $num_awarded_pi++;
+	     break;
+     case $ccv->constants["Funding Role"]["Co-investigator"]:
+     case $ccv->constants["Funding Role"]["Co-applicant"]:
+	             $stats['total_awarded_coi'] += $fund['total_amount'];
+		     $num_awarded_coi++;
+	     break;
+     case $ccv->constants["Funding Role"]["Collaborator"]:
+	             $stats['total_awarded_collab'] += $fund['total_amount'];
+		     $num_awarded_collab++;
+	     break;
+	}
+    }
+
   }
   if (!$first)
 	  $awarded_out .= "\\end{description}\n";
+
+
 
   //COMPLETED
   $first = true;
@@ -1014,7 +1051,29 @@ function section_funding($ccv, $funds_first_year,$name) // {{{
     
     $num_funds++;
     $num_completed++;
-    $stats['total_amount'] += $fund['total_amount'];
+    
+    // for accounting, only count grands that were competitive:
+    if ($fund['funding_competitive'] == $ccv->constants["Yes-No"]["Yes"]){
+	    
+    switch ($fund['funding_role']){
+    case $ccv->constants["Funding Role"]["Principal Investigator"]:
+    case $ccv->constants["Funding Role"]["Principal Applicant"]:
+	             $stats['total_completed_pi'] += $fund['total_amount'];
+		     $num_completed_pi++;
+	     break;
+     case $ccv->constants["Funding Role"]["Co-investigator"]:
+     case $ccv->constants["Funding Role"]["Co-applicant"]:
+	             $stats['total_completed_coi'] += $fund['total_amount'];
+		     $num_completed_coi++;
+	     break;
+     case $ccv->constants["Funding Role"]["Collaborator"]:
+	             $stats['total_completed_collab'] += $fund['total_amount'];
+		     $num_completed_collab++;
+	     break;
+	}
+    }
+
+
   }
   if (!$first)
 	  $completed_out .= "\\end{description}\n";
@@ -1037,10 +1096,7 @@ function section_funding($ccv, $funds_first_year,$name) // {{{
 
     $submitted_out.=print_fund($ccv, $fund, $name);
 
-    
-    $num_funds++;
     $num_submitted++;
-    $stats['total_amount'] += $fund['total_amount'];
   }
   if (!$first)
 	  $submitted_out .= "\\end{description}\n";
@@ -1057,6 +1113,29 @@ function section_funding($ccv, $funds_first_year,$name) // {{{
 
   $tmp_out .= "\n\\section{Under review, N=".$num_submitted."}\n";
   $tmp_out .= $submitted_out;
+
+
+// make table
+  $t_out .= "\\begin{center}\n";
+  $t_out .= "\\begin{tabular}{|l|c|c|c|}\n";
+  $t_out .= "\\hline\n";
+  $t_out .= "Competitive Funding  & as PI / Co-PI &  as Co-I & as Collaborator  \\\\\n";
+  $t_out .= "\\hline\n";
+  $t_out .= "Awarded & \\$".number_format($stats['total_awarded_pi'],0,'.',',')." & \\$".number_format($stats['total_awarded_coi'],0,'.',',')." & \\$".number_format($stats['total_awarded_collab'],0,'.',',')."\\\\\n";
+  $t_out .= "Completed & \\$".number_format($stats['total_completed_pi'],0,'.',',')." & \\$".number_format($stats['total_completed_coi'],0,'.',',')." & \\$".number_format($stats['total_completed_collab'],0,'.',',')."\\\\\n";
+  $t_out .= "\\hline\n";
+//  $t_out .= "Courses Taught & ".($stats['num_courses_taught'])." \\\\\n";
+// $t_out .= "Number of students & ".$stats['num_students_supervised']." \\\\\n";
+//  $t_out .= "\\hline\n";
+//  $t_out .= "Papers Reviewed & ".($stats['num_reviewed_journal_papers'] + $stats['num_reviewed_conf_papers'])." \\\\\n";
+//  $t_out .= "\hspace{10pt} Journals & ".$stats['num_reviewed_journal_papers']." \\\\\n";
+//  $t_out .= "\hspace{10pt} Conferences & ".$stats['num_reviewed_conf_papers']." \\\\\n";
+//  $t_out .= "\\hline\n";
+//  $t_out .= "Committee Memberships & ".$stats['num_committees']." \\\\\n";
+//  $t_out .= "\\hline\n";
+  $t_out .= "\\end{tabular}\n";
+  $t_out .= "\\end{center}\n";
+
 
   $t_out .= "\nSince ".$first_year." I have received a total of \\textbf{\\$".number_format($stats['total_amount_pi'], 0, '.', ',')."} in research grants as PI or co-PI through \\textbf{".$num_funds_pi."}  different applications, ";
   $t_out .= "and participated in \\textbf{".$num_funds_coi."} grants as co-I with a total funding of \\textbf{\\$".number_format($stats['total_amount_coi'], 0, '.', ',')."}.\n\n";
