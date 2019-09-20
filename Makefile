@@ -13,4 +13,6 @@ cv.xml:
 clean:
 	rm -f cv.tex cv.pdf
 
+test: cv.xml
+	php cv-to-latex.php
 

@@ -127,6 +127,7 @@ class CommonCV // {{{
       $record["volume"] = $this->get_xpath("field[@id='0a826c656ff34e579dfcbfb373771260']/value", $elements->item($i));
       $record["number"] = $this->get_xpath("field[@id='cc1d9e14945b4e8496641dbe22b3448a']/value", $elements->item($i));
       $record["status"] = $this->get_xpath("field[@id='3b56e4362d6a495aa5d22a1de5914741']/lov/@id", $elements->item($i));
+      $record["contribution_role"] = $this->get_xpath("field[@id='9f2e163dfcbf4abdb73e9d5c4daf03c4']/value", $elements->item($i));
       $pr = $this->get_xpath("field[@id='2089ff1a86844b6c9a10fc63469f9a9d']/lov/@id", $elements->item($i));
       if ($pr === $CCV_CONST["Yes-No"]["Yes"])
         $record["peer_reviewed"] = true;
@@ -177,6 +178,39 @@ class CommonCV // {{{
     }
     return $records;
   } // }}}
+ 
+  /**
+   * Parses the list of invited presentations returns (some of its) data
+   * as an associative array for convenience
+   */
+  public function getPresentations() // {{{
+  {
+    global $CCV_CONST;
+    $records = array();
+//    $elements = $this->m_xpath->query("//section[@id='9a34d6b273914f18b2273e8de7c48fd6']");
+    $elements = $this->m_xpath->query("//section[@id='c7ce6f054e0941ea8b27127dbd4a26d0']");
+    for ($i = 0; !is_null($elements) && $i < $elements->length; $i++)
+    {
+      $record = array();
+      $id = $this->get_xpath("@recordId", $elements->item($i));
+      $record["title"] = $this->get_xpath("field[@id='3f6a7ac56ee64b7dbd84dba9d6e3302d']/value", $elements->item($i));
+      $record["conf_name"] = $this->get_xpath("field[@id='8d882e55b0a54d0b8eec347f5502a19b']/value", $elements->item($i));
+      $record["city"] = $this->get_xpath("field[@id='de6f8e0d7a714b07a4671af86405c6c9']/value", $elements->item($i));
+      $location = $this->get_xpath("field[@id='f4b5f1a1d181404ca9c0fea81f9a7e79']/lov/@id", $elements->item($i));
+
+      $record["country"] = ucwords(strtolower($this->getCaptionFromValue($location)));
+      $inv = $this->get_xpath("field[@id='720d2f02feaf4aacb06ce60be0c6f603']/lov/@id", $elements->item($i));
+      if ($inv === $CCV_CONST["Yes-No"]["Yes"])
+        $record["invited"] = true;
+      elseif ($inv === $CCV_CONST["Yes-No"]["No"])
+        $record["invited"] = false;
+      $record["year"] = $this->get_xpath("field[@id='725e4c54320b474680feaf530567fdd3']/value", $elements->item($i));
+      $records[$id] = $record;
+    }
+    return $records;
+  } // }}}
+
+
 
   /**
    * Parses the list of supervised students and returns (some of its) data
@@ -201,6 +235,8 @@ class CommonCV // {{{
       $record["status"] = $this->get_xpath("field[@id='e5d331dca0fc4000992e43b695b2db21']/lov/@id", $elements->item($i));
       $record["role"] = $this->get_xpath("field[@id='78a3e68f1ab74f31b9284c2acdb70739']/lov/@id", $elements->item($i));
       $record["title"] = $this->get_xpath("field[@id='420e5bbd57104c3c9823b5e6850ee6f8']/value", $elements->item($i));
+      $record["present_position"] = $this->get_xpath("field[@id='0f2f1601c24144308e0966d75b781db9']/value", $elements->item($i));
+      $record["present_company"] = $this->get_xpath("field[@id='c20e3ae276a2429d888ae8e16216182f']/value", $elements->item($i));
       $records[$id] = $record;
     }
     return $records;
@@ -225,6 +261,7 @@ class CommonCV // {{{
       @list($record["end_year"], $record["end_month"]) = explode("/", $date);
       $record["funding_title"] = $this->get_xpath("field[@id='735545eb499e4cc6a949b4b375a804e8']/value", $elements->item($i));
       $record["funding_type"] = $this->get_xpath("field[@id='931b92a5ffed4e5aa9c7b3a0afd5f8ba']/lov/@id", $elements->item($i));
+      $record["funding_status"] = $this->get_xpath("field[@id='0991ead151e3445ca7537aa15acbec57']/lov/@id", $elements->item($i));
       $record["funding_program"] = $this->get_xpath("section[@id='376b8991609f46059a3d66028f005360']/field[@id='97231512141a452a82151cc162e9a59c']/value", $elements->item($i));
       $record["funder"] = $this->get_xpath("section[@id='376b8991609f46059a3d66028f005360']/field[@id='67e083b070954e91bcbb1cc70131145a']/lov/@id", $elements->item($i));
       $record["otherfunder"] = $this->get_xpath("section[@id='376b8991609f46059a3d66028f005360']/field[@id='1bdead14642545f3971a59997d82da67']/value", $elements->item($i));
@@ -232,16 +269,38 @@ class CommonCV // {{{
       $record["received_amount"] = $this->get_xpath("section[@id='376b8991609f46059a3d66028f005360']/field[@id='882a94c7548744ca992e2647346d2e14']/value", $elements->item($i));
       $record["funding_role"] = $this->get_xpath("field[@id='7496de092dc84038a1881e8f9d77e713']/lov/@id", $elements->item($i));
       $record["funding_competitive"] = $this->get_xpath("section[@id='376b8991609f46059a3d66028f005360']/field[@id='00efdc7e790a48ac8675696c66afc3ad']/lov/@id", $elements->item($i));
-      $co_holders = array();
+
+
+
+      $co_holders_PI = array();
+      $co_holders_coI = array();
+      $co_holders_collab = array();
+      $co_holders_KU = array();
       $co_els = $this->m_xpath->query("section[@id='c7c473d1237b432fb7f2abd831130fb7']", $elements->item($i));
       for ($j = 0; !is_null($co_els) && $j < $co_els->length; $j++)
       {
+	
         $co_holder = array();
         $ch_id = $this->get_xpath("@recordId", $co_els->item($j));
         $co_holder["name"] = $this->get_xpath("field[@id='ddd551dfb26344fbb17f07afcffc94ed']/value", $co_els->item($j));
-        $co_holders[$ch_id] = $co_holder;
+	$co_holder["role"] = $this->get_xpath("field[@id='13806a6772d248158619261afaab2fe0']/lov/@id", $co_els->item($j));
+	if ($co_holder["role"] === $CCV_CONST["Funding Role"]["Principal Applicant"] || $co_holder["role"] === $CCV_CONST["Funding Role"]["Principal Applicant"])
+		$co_holders_PI[$ch_id] = $co_holder;	
+	else if ($co_holder["role"] === $CCV_CONST["Funding Role"]["Co-investigator"] || $co_holder["role"] === $CCV_CONST["Funding Role"]["Co-applicant"])	    
+		$co_holders_coI[$ch_id] = $co_holder;	
+	else if ($co_holder["role"] === $CCV_CONST["Funding Role"]["Collaborator"] )
+		$co_holders_collab[$ch_id] = $co_holder;	
+	else if ($co_holder["role"] === $CCV_CONST["Funding Role"]["Principal Knowledge User"] )
+		$co_holders_KU[$ch_id] = $co_holder;	
+
       }
-      $record["co_holders"] = $co_holders;
+     $record["PIs"] = $co_holders_PI;
+      $record["coIs"] = $co_holders_coI;
+      $record["collabs"] = $co_holders_collab;
+      $record["KUs"] = $co_holders_KU;
+
+
+
       $comp = $this->get_xpath("section[@id='376b8991609f46059a3d66028f005360']/field[@id='00efdc7e790a48ac8675696c66afc3ad']/lov/@id", $elements->item($i));
       if ($comp === $CCV_CONST["Yes-No"]["Yes"])
         $record["competitive"] = true;
