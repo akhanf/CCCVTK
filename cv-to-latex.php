@@ -1137,8 +1137,8 @@ function section_funding($ccv, $funds_first_year,$name) // {{{
   $t_out .= "\\end{center}\n";
 
 
-  $t_out .= "\nSince ".$first_year." I have received a total of \\textbf{\\$".number_format($stats['total_amount_pi'], 0, '.', ',')."} in research grants as PI or co-PI through \\textbf{".$num_funds_pi."}  different applications, ";
-  $t_out .= "and participated in \\textbf{".$num_funds_coi."} grants as co-I with a total funding of \\textbf{\\$".number_format($stats['total_amount_coi'], 0, '.', ',')."}.\n\n";
+//  $t_out .= "\nSince ".$first_year." I have received a total of \\textbf{\\$".number_format($stats['total_amount_pi'], 0, '.', ',')."} in research grants as PI or co-PI through \\textbf{".$num_funds_pi."}  different applications, ";
+//  $t_out .= "and participated in \\textbf{".$num_funds_coi."} grants as co-I with a total funding of \\textbf{\\$".number_format($stats['total_amount_coi'], 0, '.', ',')."}.\n\n";
   $t_out .= $tmp_out;
   return $t_out;
 } // }}}
@@ -1257,7 +1257,7 @@ function section_currentstudents($ccv, $students_first_year) // {{{
   
   if (!$first)
     $tmp_out .= "\\end{enumerate}\n";
-  $t_out .= "\nI currently supervise ";
+/*  $t_out .= "\nI currently supervise ";
   $t_out .= "\\textbf{".$stats['curr_supervised_pdf']."} post-doctoral fellow".( ( $stats['curr_supervised_pdf'] > 1) || ( $stats['curr_supervised_pdf'] == 0) ? "s" : "").", ";
   $t_out .= "\\textbf{".$stats['curr_supervised_phd']."} Ph.D.\\ student".( ( $stats['curr_supervised_phd'] > 1) || ( $stats['curr_supervised_phd'] == 0) ? "s" : "").", ";
   $t_out .= "\\textbf{".$stats['curr_supervised_msc']."} M.Sc.\\ student".( ( $stats['curr_supervised_msc'] > 1) || ( $stats['curr_supervised_msc'] == 0) ? "s" : "")." and ";
@@ -1268,6 +1268,7 @@ function section_currentstudents($ccv, $students_first_year) // {{{
   $t_out .= "\\textbf{".$stats['curr_cosupervised_msc']."} M.Sc.\\ student".( ( $stats['curr_cosupervised_msc'] > 1) || ( $stats['curr_cosupervised_msc'] == 0) ? "s" : "")." and ";
   $t_out .= "\\textbf{".$stats['curr_cosupervised_undergrad']."} undergraduate student".( ( $stats['curr_cosupervised_undergrad'] > 1) || ( $stats['curr_cosupervised_undergrad'] == 0) ? "s" : "")." ";
   $t_out .= "as co-supervisor, listed below.\n\n";
+ */
   $t_out .= $tmp_out;
   return $t_out;
 } // }}} 
@@ -1389,7 +1390,7 @@ function section_completedstudents($ccv, $students_first_year) // {{{
   
   if (!$first)
 	  $tmp_out .= "\\end{enumerate}\n";
-  $t_out .= "\nI have completed supervision of ";
+/*  $t_out .= "\nI have completed supervision of ";
   $t_out .= "\\textbf{".$stats['complete_supervised_pdf']."} post-doctoral fellow".( ( $stats['complete_supervised_pdf'] > 1) || ( $stats['complete_supervised_pdf'] == 0) ? "s" : "").", ";
   $t_out .= "\\textbf{".$stats['complete_supervised_phd']."} Ph.D.\\ student".( ( $stats['complete_supervised_phd'] > 1) || ( $stats['complete_supervised_phd'] == 0) ? "s" : "").", ";
   $t_out .= "\\textbf{".$stats['complete_supervised_msc']."} M.Sc.\\ student".( ( $stats['complete_supervised_msc'] > 1) || ( $stats['complete_supervised_msc'] == 0) ? "s" : "")." and ";
@@ -1399,7 +1400,7 @@ function section_completedstudents($ccv, $students_first_year) // {{{
   $t_out .= "\\textbf{".$stats['complete_cosupervised_phd']."} Ph.D.\\ student".( ( $stats['complete_cosupervised_phd'] > 1) || ( $stats['complete_cosupervised_phd'] == 0) ? "s" : "").", ";
   $t_out .= "\\textbf{".$stats['complete_cosupervised_msc']."} M.Sc.\\ student".( ( $stats['complete_cosupervised_msc'] > 1) || ( $stats['complete_cosupervised_msc'] == 0) ? "s" : "")." and ";
   $t_out .= "\\textbf{".$stats['complete_cosupervised_undergrad']."} undergraduate student".( ( $stats['complete_cosupervised_undergrad'] > 1) || ( $stats['complete_cosupervised_undergrad'] == 0) ? "s" : "")." ";
-  $t_out .= "as co-supervisor, listed below.\n\n";
+  $t_out .= "as co-supervisor, listed below.\n\n";*/
   $t_out .= $tmp_out;
   return $t_out;
 } // }}} 
